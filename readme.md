@@ -746,4 +746,177 @@ foreach($user in $users)
 
 ---
 
+<a id="ressourcesPartagees"></a>
+# `🔐` ︲ Act 6 : Administrer les ressources partagées
+
+<a id="partagesManuels"></a>
+## `📂` ︲ Créer et administrer des partages de fichiers (Manuel)
+
+Pour mettre en place l'arborescence des partages sur le serveur de fichiers (`SRV-AD1`), procédez étape par étape :
+
+1. Sur votre serveur `SRV-AD1`, ouvrez l'`Explorateur de fichiers` et rendez-vous sur le disque `DATA` sur le lecteur (dans mon cas) `E:`.
+2. Créez un dossier racine nommé `partages`, puis à l'intérieur, créez les cinq dossiers principaux correspondant aux services du centre de formation : `administratif`, `comptabilite`, `formateurs`, `scolarite` et `stagiaires`.
+3. Dans chacun de ces dossiers de services, créez deux sous-dossiers `commun` et `perso`.
+4. Pour le dossier `perso` du service `administratif`, créez manuellement les dossiers individuels des utilisateurs `patrick.salrie` et `christine.allongui`.
+5. Pour chaque dossier de type `commun` dans `administratif`, `comptabilite` etc, configurez le partage réseau en faisant un `clic droit` puis `Propriétés`, onglet `Partage` et `Partage avancé...`.
+6. Cochez `Partager ce dossier`, nommez les partages clairement (ex dans mon cas: `commun_administratif`), dans `Autorisations`, attribuez le `Contrôle total` au groupe `Tout le monde`.
+7. Pour appliquer les autorisations de Sécurité, se rendre dans l'onglet `Sécurité` puis cliquer sur le bouton `Avancé`. Désactivez `l'héritage de sécurité`, puis configurez les permissions de sorte que :
+   - L'administrateur conserve le `Contrôle total` (donc ne rien toucher).
+   - Ajouter le groupe associé au service (ex: `grp_administratif`) et cocher `modification` et enlever `suppression`
+   - Ajouter `CREATEUR PROPRIÉTAIRE` avec l'autorisation de modification afin que seul le créateur d'un fichier peut le supprimer.
+8. Pour les dossiers individuels perso des utilisateurs (ex: `christine.allongui` et `patrick.salrie`), désactivez également l'héritage de sécurité. Puis ajouter les users dans les autoristaions en  cochant `Modification` pour les utilisateurs concernées.
+
+<details>
+  <summary><strong>📸︲Arborescence des dossiers principaux de service dans partages</strong></summary>
+  <img src="captures/2026-11-01 21_47_11-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Sous-dossiers commun et perso d'un service</strong></summary>
+  <img src="captures/2026-10-30 15_22_32-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Dossiers individuels créés manuellement dans perso</strong></summary>
+  <img src="captures/2026-10-30 15_53_39-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Propriétés de partage d'un dossier commun</strong></summary>
+  <img src="captures/2026-10-30 16_03_19-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-10-30 16_04_23-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-10-30 16_05_20-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Autorisations de partage (Contrôle total pour Tout le monde)</strong></summary>
+  <img src="captures/2026-11-01 20_53_01-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Paramètres de sécurité avancés et désactivation de l'héritage</strong></summary>
+  <img src="captures/2026-10-30 16_10_38-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Permissions NTFS détaillées pour le groupe associé</strong></summary>
+  <img src="captures/2026-11-01 20_59_43-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Permissions NTFS pour un dossier personnel utilisateur</strong></summary>
+  <img src="captures/2026-11-01 21_00_51-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+### Détail des autorisations à appliquer sur l'arborescence :
+
+- **Dossier racine `E:\partages`** :
+
+- **Sous-dossier `commun` de chaque service (ex: `E:\partages\administratif\commun`)** :
+  * `Administrateurs` : Contrôle total.
+  * `grp_administratif` : Modification, Lecture et exécution, Affichage, Lecture, Écriture. Puis décocher suppression 
+  * `CREATEUR PROPRIETAIRE` : Modification, Lecture et exécution, Affichage, Lecture, Écriture.
+
+- **Sous-dossier `perso` de chaque service (ex: `E:\partages\administratif\perso`)** :
+  * Dossiers individuels des employés (ex: `patrick.salrie`, `christine.allongui`) :
+  * Désactivez l'héritage sur chaque dossier personnel d'employé.
+  * Donnez le `Contrôle total` à l'utilisateur concerné (ex: `christine.allongui`) et à l'`Administrateur`.
+
+---
+
+<a id="partagesAuto"></a>
+## `🤖` ︲ Créer et administrer des partages (Automatisée)
+
+Pour automatiser la création des dossiers personnels des stagiaires à grande échelle et appliquer les droits de sécurité NTFS associés :
+
+1. Ouvrez l'éditeur `Windows PowerShell ISE` en tant qu'administrateur sur le serveur `SRV-AD1`.
+2. Installez le module requis pour la gestion fine des autorisations NTFS (tapez `Install-Module NTFSSecurity` puis validez les invites de sécurité en choisissant `[O] Oui` ou `[T] Oui pour tout`).
+3. Rédigez le script PowerShell permettant de lire le fichier CSV des stagiaires, de créer dynamiquement leurs répertoires personnels et d'isoler les permissions de sécurité en coupant l'héritage :
+
+```powershell
+$users = Import-Csv -Path "C:\Users\Administrateur\Documents\stagiaires_sisr.csv" -Delimiter ";"
+
+$personnalPathRoot = "E:\partages\stagiaires\SIO-SISR\perso"
+
+foreach($user in$users)
+{
+    $login = ($user.prenom + "." + $user.nom).ToLower()
+    $nom =$user.nom
+    $prenom =$user.prenom
+
+    if($login.Length -ge 20){
+        $sub =$login.Length - 20
+
+        $prenom = $prenom.Substring(0,$prenom.Length - $sub)$login = ($prenom + "." + $nom).ToLower()
+    }
+
+    # creation repertoire user
+    New-Item -ItemType Directory -Path "$personnalPathRoot\$login"
+
+    # recuperation autorisations NTFS repertoire cree
+    $acl = Get-Acl -Path "$personnalPathRoot\$login"
+
+    # supprimer l'heritage
+    $acl.SetAccessRuleProtection($true,$false)
+
+    # attribution liste autorisations modifiees
+    Set-Acl -Path "$personnalPathRoot\$login" -AclObject $acl
+
+    Add-NTFSAccess -Path "$personnalPathRoot\$login" -Account "$login@descartesbleu.org" -AccessRights Modify, Synchronize
+}
+```
+
+<details>
+  <summary><strong>📸︲Installation du module NTFS</strong></summary>
+  <img src="captures/2026-11-01 22_32_06-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Execution du script</strong></summary>
+  <img src="captures/2026-11-01 22_50_37-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Confirmation</strong></summary>
+  <img src="captures/2026-11-01 22_50_56-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-01 22_51_50-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+---
+
+<a id="redirectionStagiaires"></a>
+## `🔄` ︲ Redirection de dossier et validation
+
+1. Ouvrez le `Gestionnaire de serveur`, cliquez sur `Outils` puis sur `Gestion de stratégie de groupe`.
+2. Créez un nouvel objet GPO `GPO_Redirection_Stagiaires` et liez-le sur l'Unité d'Organisation (UO) correspondante aux stagiaires (`SIO-SISR`).
+3. Faites un clic droit sur la GPO et choisissez `Modifier...`.
+4. Dans l'éditeur, naviguez vers : `Configuration utilisateur` > `Stratégies` > `Paramètres Windows` > `Redirection de dossiers`.
+5. Faites un clic droit sur `Documents`, `Propriétés`. Dans le paramètre de base, indiquez de rediriger le dossier vers le chemin UNC du dossier personnel de chaque utilisateur `\\srv-ad1\perso_sio_sisr\%USERNAME%`. 
+6. Décochez `Accorder à l'utilisateur des droits exclusifs sur Documents` dans l'onglet `Paramètres`.
+7. Validez les fenêtres. Pour appliquer immédiatement la stratégie sur un poste client, ouvrez une invite de commande et tapez `gpupdate /force`.
+8. Pour tester, connectez vous a un session stagiaires et y creer un document vous devriez voir un logo sur `Documents`. 
+
+> [!ATTENTION]
+> N'oubliez pas de réaliser un snapshot de la machine virtuelle du serveur à la fin de cette mission.
+
+<details>
+  <summary><strong>📸︲Configuration de la GPO de redirection de dossiers pour les stagiaires</strong></summary>
+  <img src="captures/2026-11-01 23_44_04-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-01 23_44_10-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-01 23_44_21-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png">
+</details>
+
+<details>
+<summary><strong>📸︲Test et verif</strong></summary>
+<img src="captures/2026-11-01 23_58_29-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+<br>
+<img src="captures/2026-11-02 00_00_59-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png">
+</details>
+---
+
 **Esteban GUILLERMIN EGIDIO** | **BTS SIO SISR**
