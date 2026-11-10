@@ -899,7 +899,7 @@ foreach($user in$users)
 7. Validez les fenêtres. Pour appliquer immédiatement la stratégie sur un poste client, ouvrez une invite de commande et tapez `gpupdate /force`.
 8. Pour tester, connectez vous a un session stagiaires et y creer un document vous devriez voir un logo sur `Documents`. 
 
-> [!ATTENTION]
+> [!WARNING]
 > N'oubliez pas de réaliser un snapshot de la machine virtuelle du serveur à la fin de cette mission.
 
 <details>
@@ -917,6 +917,248 @@ foreach($user in$users)
 <br>
 <img src="captures/2026-11-02 00_00_59-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png">
 </details>
+
 ---
+
+<a id="miseADispoRessources"></a>
+# `🌐` ︲ Act 7 : Mettre à disposition les ressources réseau
+
+<a id="mappageGpoMethode"></a>
+## `⚙️` ︲ Méthodologie de création des mappages par GPO
+
+1. Ouvrez la `Gestion de stratégie de groupe` depuis le `Gestionnaire de serveur` dans la rubrique `Outils`.
+2. Déroulez l'arborescence de votre domaine jusqu'aux Unités d'Organisation sur la gauche.
+3. Faites un clic droit sur l'OU `administratif` et sélectionnez `Créer un objet GPO dans ce domaine, et le lier ici...`.
+4. Nommez la GPO comme par exemple `Mappage Lecteur RZO administratif`
+5. Faites un clic droit sur cette nouvelle GPO et cliquez sur `Modifier` pour ouvrir l'éditeur.
+6. Naviguez dans : `Configuration utilisateur`, puis `Préférences`, `Paramètres Windows` et `Mappages de lecteurs`.
+7. Dans le panneau des mappages de lecteur, faites un clic droit et cliquez sur  `Nouveau` puis `Lecteur mappé`.
+8. Configurez les propriétés du lecteur réseau (à faire une fois pour le dossier commun, et une fois pour le dossier personnel) :
+   - **Action** : `Mettre à jour` (recommandé pour créer le lecteur s'il n'existe pas, et ou le mettre à jour s'il est déjà présent).
+   - **Emplacement** : Saisissez le chemin du partage `\\srv-ad1\commun_administratif` pour le dossier commun, et `\\srv-ad1\perso_administratif\%USERNAME%` pour le dossier personnel.
+   - **Reconnecter** : Cochez la case pour que le lecteur se reconnecte aux redémarrages.
+   - **Libeller en tant que** : Donnez un nom clair pour Commun : `Commun`, pour Perso : `Perso`. Etc...
+   - **Lettre de lecteur** : Choisissez la lettre à attribuer, `C` pour le commun, `P` pour perso.
+9. Faire de même pour les OU `comptabilite`, `scolarite` et `formateurs`.
+
+### 2. Ajout Mappage OU `formateurs`
+Les formateurs nécessitent un accès aux ressources des stagiaires en plus :
+- **Lecteur Dépôt SIO-SISR** : `\\srv-ad1\depot_sio_sisr` 
+- **Lecteur Ressources SIO-SISR** : `\\srv-ad1\ressources_sio_sisr` 
+
+### 3. Mappage OU `stagiaires` 
+Pour les stagiaires :
+- **Lecteur Perso Stagiaire** : `\\srv-ad1\perso_stagiaire\%USERNAME%` 
+- **Lecteur Dépôt** : `\\srv-ad1\depot_sio_sisr`
+
+> [!NOTE]
+> Une fois les GPO créées et configurées, vous pouvez exécuter la commande `gpupdate /force` sur un poste client Windows 11 pour forcer l'actualisation des stratégies et vérifier l'apparition immédiate des lecteurs dans l'Explorateur de fichiers.
+
+<details>
+  <summary><strong>📸︲Création de la GPO et navigation dans l'éditeur</strong></summary>
+  <img src="captures/2026-11-09 21_35_59-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_36_41-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_36_58-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_38_04-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_38_15-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_40_00-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration des lecteurs pour l'OU administratif</strong></summary>
+  <img src="captures/2026-11-09 21_41_40-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_42_58-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration des lecteurs pour l'OU comptabilite</strong></summary>
+  <img src="captures/2026-11-09 21_44_32-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_45_24-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration des lecteurs pour l'OU formateurs</strong></summary>
+  <img src="captures/2026-11-09 21_47_14-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_48_35-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_52_57-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_53_48-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration des lecteurs pour l'OU scolarite</strong></summary>
+  <img src="captures/2026-11-09 21_49_55-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 21_50_27-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration des lecteurs pour l'OU stagiaires</strong></summary>
+  <img src="captures/2026-11-09 21_59_55-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 22_00_36-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Vérification du mappage sur un poste client Windows 11</strong></summary>
+  <img src="captures/2026-11-09 22_04_46-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+---
+
+<a id="adminPostesGpo"></a>
+# `📦` ︲ Act 8 : Administrer les postes du domaine par GPO
+
+<a id="deploiementLogiciel"></a>
+## `⚙️` ︲ Déploiement d'un logiciel par GPO (Firefox)
+
+1. Sur le serveur, ouvrez l'Explorateur de fichiers Puis rendez vous sur `DATA (E:)` et créez un dossier nommé `applications`.
+2. Configurez le partage de ce dossier en faisant un clic droit `Propriétés`, onglet `Partage` appuyer sur `Partage avancé...`. Et cochez `Partager ce dossier`, nommez le partage `applications$` (pour qu'il soit masqué du réseau) et donnez les autorisations en sélectionnant le groupe `Tout le monde` avec le `Contrôle total`.
+3. Dans l'onglet `Sécurité`, bouton `Avancé`, appuyer sur convertir l'héritage. Puis ajouter le groupe `Ordinateurs du domaine` avec le droit `Lecture et exécution`. 
+4. Dans la console `Utilisateurs et ordinateurs Active Directory`, créez une OU nommée `salles`, puis dans celle-ci une autre OU `S126`. Déplacez-y le compte d'ordinateur `S126-P01` à l'interieur.
+5. Ouvrez la `Gestion de stratégie de groupe` depuis la rubrique `Outils`.
+6. Déroulez l'arborescence jusqu'à l'OU `salles`, `S126`, faites un clic droit dessus et sélectionnez `Créer un objet GPO dans ce domaine, et le lier ici...`. Nommez la GPO par exemple `Deployer Firefox`.
+7. Faites un clic droit sur la GPO créée et cliquez sur `Modifier` pour ouvrir l'éditeur de gestion des stratégies de groupe.
+8. Naviguez dans : `Configuration ordinateur`, `Stratégies`, `Paramètres du logiciel` et enfin `Installation de logiciel`.
+9. Dans le panneau de droite, faites un clic droit, puis survolez `Nouveau` et cliquez sur `Package...`.
+10. Sélectionnez le fichier d'installation via le chemin du partage réseau caché dans notre cas `\\srv-ad1\applications$\` et choisissez la méthode de déploiement `Attribué`.
+11. Rendez-vous sur le poste client `S126-P01`, ouvrez une invite de commandes et exécutez la commande `gpupdate /force`. Redémarrez la machine pour forcer l'installation de Firefox.
+12. A l'ouverture de la session vous verrez que Firefox a bien été installé.
+
+<details>
+  <summary><strong>📸︲Création du dossier applications sur le disque de données (E:)</strong></summary>
+  <img src="captures/2026-11-09 22_50_17-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel_2.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration du partage avancé (applications$) et des autorisations associées</strong></summary>
+  <img src="captures/2026-11-09 22_50_57-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Paramètres de sécurité avancés, blocage de l'héritage et permissions NTFS pour les ordinateurs du domaine</strong></summary>
+  <img src="captures/2026-11-09 22_51_25-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 22_51_42-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 22_52_37-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 22_52_51-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 22_54_59-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Création des Unités d'Organisation "salles" et "S126" dans l'Active Directory</strong></summary>
+  <img src="captures/2026-11-09 22_55_26-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 22_56_02-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Avertissement de déplacement du compte ordinateur et liaison de la GPO de déploiement</strong></summary>
+  <img src="captures/2026-11-09 22_57_20-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration de l'installation du package logiciel (Firefox) dans l'éditeur de GPO</strong></summary>
+  <img src="captures/2026-11-09 22_58_00-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_01_23-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_01_38-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_02_41-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Actualisation de la stratégie (gpupdate /force) et vérification du déploiement sur le poste client S126-P01</strong></summary>
+  <img src="captures/2026-11-09 23_03_53-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_04_33-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_08_16-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.jpg"/>
+  <br>
+  <img src="captures/2026-11-09 23_08_55-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<a id="restrictionHoraires"></a>
+## `🕰️` ︲ Limitation des horaires d'accès (Stagiaires)
+
+1. Ouvrez `Utilisateurs et ordinateurs Active Directory`.
+2. Rendez-vous dans l'Unité d'Organisation contenant les comptes des stagiaires.
+3. Sélectionnez tous les comptes utilisateurs concernés, faites un clic droit puis `Propriétés`.
+4. Allez dans l'onglet `Compte` et cliquez sur le bouton `Horaires d'accès...`.
+5. Dans la grille de sélection, refusez toutes les plages horairesautorisez la connexion que sur la plage du **lundi au vendredi, de 8h à 18h**.
+6. Cliquez sur `OK` pour valider, puis sur `Appliquer`.
+
+<details>
+  <summary><strong>📸︲Sélection multiple des utilisateurs dans l'OU stagiaires_sisr</strong></summary>
+  <img src="captures/2026-11-09 23_43_37-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Activation de la modification groupée des horaires d'accès</strong></summary>
+  <img src="captures/2026-11-09 23_43_53-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<details>
+  <summary><strong>📸︲Configuration de la grille des horaires d'accès (lundi au vendredi de 8h à 18h)</strong></summary>
+  <img src="captures/2026-11-09 23_44_48-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+---
+
+<a id="administrationDistance"></a>
+# `🛠️` ︲ Act 9 : Administrer et superviser à distance
+
+<a id="bureauADistance"></a>
+## `💻` ︲ Activer le Bureau à distance (RDP)
+
+Pour permettre aux administrateurs de se connecter à distance à l'interface du serveur `SRV-AD1` depuis n'importe quel poste du domaine :
+
+1. Sur le serveur `SRV-AD1`, ouvrez le `Gestionnaire de serveur` et cliquez sur `Serveur local` dans le volet de gauche.
+2. Repérez la ligne `Bureau à distance`, cliquez dessus.
+3. Dans la fenêtre des Propriétés système qui s'ouvre sur l'onglet `Utilisation à distance`, sélectionnez l'option `Autoriser les connexions à distance à cet ordinateur`.
+4. Validez l'avertissement en cliquant sur `OK`, ce qui bascule l'état du Bureau à distance sur `Activé`
+5. Depuis un poste client du domaine, ouvrez le menu Démarrer et recherchez l'application `Connexion Bureau à distance`.
+6. Saisissez le nom de la machine cible `SRV-AD1` puis cliquez sur `Connexion`.
+7. Entrez vos informations d'identification d'administrateur du domaine pour valider l'authentification et ouvrir la session distante sur le serveur.
+
+<details>
+  <summary><strong>📸︲Configuration du bureau à distance</strong></summary>
+  <img src="captures/2026-11-09 23_48_56-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_49_32-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+<details>
+  <summary><strong>📸︲Test du bureau à distance</strong></summary>
+  <img src="captures/2026-11-09 23_53_14-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/> 
+  <br>
+  <img src="captures/2026-11-09 23_51_53-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br> 
+  <img src="captures/2026-11-09 23_52_10-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br> 
+  <img src="captures/2026-11-09 23_52_20-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+  <br>
+  <img src="captures/2026-11-09 23_52_37-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+<a id="bginfoInstallation"></a>
+## `📊` ︲ Installation et configuration de BgInfo
+
+1. Sur SRV-AD1, ouvrez l'Explorateur de fichiers.
+2. Dans la barre d'adresse, saisissez : `\\descartesbleu.org\NETLOGON`
+3. Créez un dossier nommé `PowerBGInfo`
+
 
 **Esteban GUILLERMIN EGIDIO** | **BTS SIO SISR**
