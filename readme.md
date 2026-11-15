@@ -8,28 +8,40 @@ Ce dépôt présente la documentation technique à l'administration d'un Active 
 
 - [📘 ︲ Introduction](#introduction)
   - [🎯 ︲ Contexte et objectifs du TP](#contexte)
-  - [🖥️ ︲ Configuration de la machine serveur](#configuration)
   - [🗺️ ︲ Arborescence de l'Active Directory](#arborescence-ad)
-- [🚀 ︲ Activité 2 : Installation des rôles AD DS et DNS](#installationroles)
-  - [➕ ︲ Ajout du service AD DS](#ajoutroles)
-  - [⚙️ ︲ Lancement et validation de l'installation](#validationinstall)
-  - [👑 ︲ Promotion du serveur en contrôleur de domaine](#promotiondc)
-  - [🌳 ︲ Configuration de la nouvelle forêt](#configurationforets)
-  - [🔒 ︲ Paramétrage des options et du mode DSRM](#optionsdsrm)
-  - [🔍 ︲ Vérifications et validation finale de la promotion](#validationpromotion)
-  - [🔐 ︲ Simplification de la stratégie de mots de passe](#strategiemdp)
-  - [🛡️ ︲ Configuration de la stratégie de mots de passe](#modificationstrategie)
-- [👥 ︲ Activité 3 : Structurer et administrer Active Directory](#structurationad)
-  - [📁 ︲ Création des unités d'organisation et des groupes](#creationuo)
-  - [👤 ︲ Création des utilisateurs](#creationusers)
-  - [💻 ︲ Intégration d'un PC client au domaine](#integrationposte)
+  - [🖥️ ︲ Configuration de la machine serveur](#configuration)
+- [🚀 ︲ Activité 2 : Installation des rôles AD DS et DNS](#installationRoles)
+  - [➕ ︲ Ajout du service AD DS](#ajoutRoles)
+  - [⚙️ ︲ Lancement et validation de l'installation](#validationInstall)
+  - [👑 ︲ Promotion du serveur en contrôleur de domaine](#promotionDC)
+  - [🌳 ︲ Configuration de la nouvelle forêt](#configurationForets)
+  - [🔒 ︲ Paramétrage des options et du mode DSRM](#optionsDSRM)
+  - [🔍 ︲ Vérifications et validation finale de la promotion](#validationPromotion)
+  - [🔐 ︲ Simplification de la stratégie de mots de passe](#strategieMdp)
+  - [🛡️ ︲ Configuration de la stratégie de mots de passe](#modificationStrategie)
+- [👥 ︲ Activité 3 : Structurer et administrer Active Directory](#structurationAD)
+  - [📁 ︲ Création des unités d'organisation et des groupes](#creationUO)
+  - [👤 ︲ Création des utilisateurs](#creationUsers)
+  - [💻 ︲ Intégration d'un PC client au domaine (Guide technique de A à Z)](#integrationPoste)
 - [📁 ︲ Activité 4 : Centraliser les données des utilisateurs](#centralisation)
-  - [🔄 ︲ Redirection des dossiers des utilisateurs](#redirectionprofils)
-  - [🔌 ︲ Activation du mode hors connexion](#modehorsconnexion)
+  - [🔄 ︲ Redirection des dossiers des utilisateurs](#redirectionProfils)
+  - [🔌 ︲ Création d'une GPO pour le mode hors connexion](#modeHorsConnexion)
 - [⚙️ ︲ Activité 5 : Automatiser l'administration des utilisateurs](#automatisation)
-  - [📁 ︲ Création de l'OU `stagiaires`](#creationoustagiaires)
-  - [📜 ︲ Création des utilisateurs, des OU et des groupes via un script PowerShell](#scriptusers)
-  - [✅ ︲ Vérification de la mise en place du script](#testscriptusers)
+  - [📁 ︲ Création de l'OU `stagiaires`](#creationOUStagiaires)
+  - [📜 ︲ Création des utilisateurs, des OU et des groupes via un script PowerShell](#scriptUsers)
+  - [✅ ︲ Vérification de la mise en place du script](#testscriptUsers)
+- [🔐 ︲ Activité 6 : Administrer les ressources partagées](#ressourcesPartagees)
+  - [📂 ︲ Créer et administrer des partages de fichiers (Manuel)](#partagesManuels)
+  - [🤖 ︲ Créer et administrer des partages (Automatisée)](#partagesAuto)
+  - [🔄 ︲ Redirection de dossier et validation](#redirectionStagiaires)
+- [🌐 ︲ Activité 7 : Mettre à disposition les ressources réseau](#miseADispoRessources)
+  - [⚙️ ︲ Méthodologie de création des mappages par GPO](#mappageGpoMethode)
+- [📦 ︲ Activité 8 : Administrer les postes du domaine par GPO](#adminPostesGpo)
+  - [⚙️ ︲ Déploiement d'un logiciel par GPO (Firefox)](#deploiementLogiciel)
+  - [🕰️ ︲ Limitation des horaires d'accès (Stagiaires)](#restrictionHoraires)
+- [🛠️ ︲ Activité 9 : Administrer et superviser à distance](#administrationDistance)
+  - [💻 ︲ Activer le Bureau à distance (RDP)](#bureauADistance)
+  - [📊 ︲ Installation et configuration de PowerBGInfo](#bginfoInstallation)
   
 ---
 
@@ -48,6 +60,19 @@ Ce dépôt présente la documentation technique à l'administration d'un Active 
 
 <a id="arborescence-ad"></a>
 ### 🗺️ ︲ Arborescence de l'Active Directory
+
+```mermaid
+graph TD
+    ROOT["🌐 descartesbleu.org"]
+    ROOT --> OU1["📁 administratif"]
+    ROOT --> OU2["📁 scolarite"]
+    ROOT --> OU3["📁 formateurs"]
+    ROOT --> OU4["📁 comptabilite"]
+    ROOT --> OU5["📁 stagiaires"]
+    OU5 --> OU6["📁 stagiaires_sisr"]
+    ROOT --> OU7["📁 salles"]
+    OU7 --> OU8["📁 S126"]
+```
 
 ---
 
@@ -162,7 +187,7 @@ Une fois AD DS installé, le serveur possède bien les services nécessaires. Ce
 
 ---
 
-<a id="validationpromotion"></a>
+<a id="validationPromotion"></a>
 ## `🔍` ︲ Vérifications et validation finale de la promotion
 
 1. Sur la page des options DNS, un avertissement concernant la délégation DNS peut apparaître si la zone parente n'est pas encore enregistrée vous pouvez ignorer cet avertissement et cliquer sur `Suivant`.
@@ -192,7 +217,6 @@ Une fois AD DS installé, le serveur possède bien les services nécessaires. Ce
   <img src="captures/2026-09-14 15_12_21-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
   <br>
   <img src="captures/2026-09-14 15_12_39-SRV-AD1 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
-</details>
 </details>
 
 ---
@@ -747,7 +771,7 @@ foreach($user in $users)
 ---
 
 <a id="ressourcesPartagees"></a>
-# `🔐` ︲ Act 6 : Administrer les ressources partagées
+# `🔐` ︲ Activité 6 : Administrer les ressources partagées
 
 <a id="partagesManuels"></a>
 ## `📂` ︲ Créer et administrer des partages de fichiers (Manuel)
@@ -921,7 +945,7 @@ foreach($user in$users)
 ---
 
 <a id="miseADispoRessources"></a>
-# `🌐` ︲ Act 7 : Mettre à disposition les ressources réseau
+# `🌐` ︲ Activité 7 : Mettre à disposition les ressources réseau
 
 <a id="mappageGpoMethode"></a>
 ## `⚙️` ︲ Méthodologie de création des mappages par GPO
@@ -1016,7 +1040,7 @@ Pour les stagiaires :
 ---
 
 <a id="adminPostesGpo"></a>
-# `📦` ︲ Act 8 : Administrer les postes du domaine par GPO
+# `📦` ︲ Activité 8 : Administrer les postes du domaine par GPO
 
 <a id="deploiementLogiciel"></a>
 ## `⚙️` ︲ Déploiement d'un logiciel par GPO (Firefox)
@@ -1098,7 +1122,7 @@ Pour les stagiaires :
 2. Rendez-vous dans l'Unité d'Organisation contenant les comptes des stagiaires.
 3. Sélectionnez tous les comptes utilisateurs concernés, faites un clic droit puis `Propriétés`.
 4. Allez dans l'onglet `Compte` et cliquez sur le bouton `Horaires d'accès...`.
-5. Dans la grille de sélection, refusez toutes les plages horairesautorisez la connexion que sur la plage du **lundi au vendredi, de 8h à 18h**.
+5. Dans la grille de sélection, autorisez la connexion uniquement sur la plage du **lundi au vendredi, de 8h à 18h** (et refusez tous les autres créneaux horaires).
 6. Cliquez sur `OK` pour valider, puis sur `Appliquer`.
 
 <details>
@@ -1119,7 +1143,7 @@ Pour les stagiaires :
 ---
 
 <a id="administrationDistance"></a>
-# `🛠️` ︲ Act 9 : Administrer et superviser à distance
+# `🛠️` ︲ Activité 9 : Administrer et superviser à distance
 
 <a id="bureauADistance"></a>
 ## `💻` ︲ Activer le Bureau à distance (RDP)
@@ -1153,12 +1177,120 @@ Pour permettre aux administrateurs de se connecter à distance à l'interface du
   <img src="captures/2026-11-09 23_52_37-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
 </details>
 
+---
+
 <a id="bginfoInstallation"></a>
-## `📊` ︲ Installation et configuration de BgInfo
+<a id="powerbginfoInstallation"></a>
+## `📊` ︲ Installation et configuration de PowerBGInfo
 
-1. Sur SRV-AD1, ouvrez l'Explorateur de fichiers.
+> [!NOTE]
+> **PowerBGInfo** est une alternative moderne et scriptée en PowerShell à l'utilitaire classique *Sysinternals BgInfo*. Il permet d'incruster directement et dynamiquement sur le fond d'écran des utilisateurs ou des serveurs les informations système critiques (nom d'hôte, adresse IP, utilisateur connecté, domaine, système d'exploitation, passerelle, etc.), sans dépendre d'un binaire externe exécutable.
+
+### 1. Préparation du dossier et du module dans le partage NETLOGON
+
+Le partage `NETLOGON` (`\\descartesbleu.org\NETLOGON`, pointant physiquement vers `C:\Windows\SYSVOL\sysvol\descartesbleu.org\scripts`) est répliqué et accessible en lecture par l'ensemble des machines et utilisateurs du domaine.
+
+1. Sur le serveur `SRV-AD1`, ouvrez l'**Explorateur de fichiers**.
 2. Dans la barre d'adresse, saisissez : `\\descartesbleu.org\NETLOGON`
-3. Créez un dossier nommé `PowerBGInfo`
+3. Créez un dossier nommé `PowerBGInfo`.
+4. Ouvrez une console **PowerShell** en tant qu'administrateur et téléchargez le module PowerBGInfo directement dans le partage réseau :
+   ```powershell
+   Save-Module -Name PowerBGInfo -Path "\\descartesbleu.org\NETLOGON\PowerBGInfo"
+   ```
+5. *(Optionnel)* Déposez une image de fond d'écran par défaut (par exemple `wallpaper.jpg` ou le logo de Descartes Bleu) dans le dossier `\\descartesbleu.org\NETLOGON\PowerBGInfo\`.
 
+---
+
+### 2. Création du script de configuration (`Set-PowerBGInfo.ps1`)
+
+Dans le dossier `\\descartesbleu.org\NETLOGON\PowerBGInfo\`, créez le script PowerShell `Set-PowerBGInfo.ps1` qui collecte les données du système et génère le fond d'écran personnalisé :
+
+```powershell
+<#
+.SYNOPSIS
+    Script de génération du fond d'écran dynamique PowerBGInfo
+.DESCRIPTION
+    Exécuté à l'ouverture de session pour afficher les métriques système et réseau du poste client ou serveur.
+#>
+
+# 1. Définition des chemins et chargement du module
+$ScriptDir = "\\descartesbleu.org\NETLOGON\PowerBGInfo"
+$ModulePath = Join-Path -Path $ScriptDir -ChildPath "PowerBGInfo"
+
+if (-not (Get-Module -Name PowerBGInfo)) {
+    Import-Module $ModulePath -Force -ErrorAction Stop
+}
+
+# 2. Collecte des données dynamiques du poste et de la session
+$HostName     = $env:COMPUTERNAME
+$CurrentLogon = "$env:USERDOMAIN\$env:USERNAME"
+$DomainName   = $env:USERDNSDOMAIN
+$OSInfo       = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
+$IPAddress    = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and $_.IPv4Address -notlike "169.254*" }).IPAddress -join ", "
+$DefaultGW    = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NextHop -First 1)
+$BootTime     = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+
+# 3. Construction et application du fond d'écran PowerBGInfo
+New-PowerBGInfo -Verbose {
+    # Configuration générale de l'image de fond (si présente, sinon fond sombre par défaut)
+    if (Test-Path "$ScriptDir\wallpaper.jpg") {
+        New-BGInfoImage -FilePath "$ScriptDir\wallpaper.jpg" -Position Fit
+    }
+
+    # Bloc d'informations positionné en haut à droite
+    New-BGInfoPanel -Position TopRight -Margin 25 -BackgroundAlpha 50 {
+        New-BGInfoText -Content "=== INFRASTRUCTURE DESCARTES-BLEU ===" -Color Yellow -FontFamily "Segoe UI" -FontSize 14 -FontStyle Bold
+        New-BGInfoText -Content "Ordinateur : $HostName" -Color White -FontFamily "Segoe UI" -FontSize 11
+        New-BGInfoText -Content "Utilisateur : $CurrentLogon" -Color White -FontFamily "Segoe UI" -FontSize 11
+        New-BGInfoText -Content "Domaine : $DomainName" -Color White -FontFamily "Segoe UI" -FontSize 11
+        New-BGInfoText -Content "Adresse IP : $IPAddress" -Color Cyan -FontFamily "Segoe UI" -FontSize 11
+        New-BGInfoText -Content "Passerelle : $DefaultGW" -Color White -FontFamily "Segoe UI" -FontSize 11
+        New-BGInfoText -Content "Système : $OSInfo" -Color White -FontFamily "Segoe UI" -FontSize 11
+        New-BGInfoText -Content "Dernier démarrage : $BootTime" -Color Gray -FontFamily "Segoe UI" -FontSize 10
+    }
+} | Set-PowerBGInfo -Target CurrentUser
+```
+
+
+---
+
+### 3. Déploiement par GPO à l'ouverture de session (Logon Script)
+
+1. Sur `SRV-AD1`, ouvrez la console **Gestion de stratégie de groupe** (`gpmc.msc`).
+2. Faites un clic droit sur le domaine `descartesbleu.org` (ou sur l'OU souhaitée, ex: `salles` / `S126`) et sélectionnez `Créer un objet GPO dans ce domaine, et le lier ici...`.
+3. Nommez la GPO : `GPO_PowerBGInfo_Bureau`.
+4. Faites un clic droit sur la GPO créée et sélectionnez `Modifier...`.
+5. Dans l'arborescence de l'éditeur de stratégie de groupe, naviguez vers :
+   - `Configuration utilisateur` > `Stratégies` > `Paramètres Windows` > `Scripts (ouverture/fermeture de session)`.
+6. Double-cliquez sur `Ouverture de session` (Logon) dans le volet central.
+7. Dans l'onglet **Scripts**, cliquez sur `Ajouter...` :
+   - **Nom du script** : Saisissez le chemin UNC du script de lancement :
+     ```text
+     \\descartesbleu.org\NETLOGON\PowerBGInfo\Run-PowerBGInfo.bat
+     ```
+   - Laissez la ligne *Paramètres de script* vide.
+8. Cliquez sur `Appliquer` puis sur `OK`.
+
+> [!TIP]
+> Il est également possible d'utiliser directement l'onglet **Scripts PowerShell** de la fenêtre d'ouverture de session en y ajoutant `\\descartesbleu.org\NETLOGON\PowerBGInfo\Set-PowerBGInfo.ps1`, ou de planifier une tâche via les Préférences GPO (`Configuration ordinateur > Préférences > Paramètres du Panneau de configuration > Tâches planifiées`) pour régénérer le papier peint à chaque reconnexion et déverrouillage de session.
+
+---
+
+### 4. Vérification et validation sur le poste client
+
+1. Connectez-vous sur le poste client Windows 11 (`S126-P01`).
+2. Ouvrez une invite de commandes et forcez l'application immédiate des stratégies de groupe :
+   ```cmd
+   gpupdate /force
+   ```
+3. Fermez la session utilisateur courante puis reconnectez-vous avec un compte du domaine (par exemple `patrick.salrie`, `tai.nguyen` ou `Administrateur`).
+4. **Validation :** Dès l'ouverture de session, le fond d'écran du bureau est automatiquement mis à jour avec les informations techniques en temps réel :
+   - Nom d'hôte de la machine cliente (`S126-P01`)
+   - Identifiant de l'utilisateur connecté (`DESCARTESBLEU\patrick.salrie`)
+   - Adresse IP attribuée (`172.16.0.10`)
+   - Nom de domaine Active Directory (`descartesbleu.org`)
+   - Version du système d'exploitation Windows 11.
+
+---
 
 **Esteban GUILLERMIN EGIDIO** | **BTS SIO SISR**
