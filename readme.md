@@ -1291,6 +1291,12 @@ New-PowerBGInfo -Verbose {
    - Nom de domaine Active Directory (`descartesbleu.org`)
    - Version du système d'exploitation Windows 11.
 
+<details>
+  <summary><strong>📸︲PowerBGInfo</strong></summary>
+  <img src="captures/2026-11-10 01_18_27-S126-P01 sur STBN-DELL5510 - Connexion à un ordinateur virtuel.png"/>
+</details>
+
+
 ---
 
 **Esteban GUILLERMIN EGIDIO** | **BTS SIO SISR**
